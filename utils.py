@@ -90,7 +90,7 @@ def load_glove_embeddings(vocab, n_unknown=100):
 
     return matrix
 
-
+# _get_word_ids（）被执行了2次在convert_qustions_to_word_ids()里，两次调用的输入依次是question1的list和question2的list
 def _get_word_ids(docs, rnn_encode=True, tree_truncate=False, max_length=100, nr_unk=100):
     Xs = np.zeros((len(docs), max_length), dtype='int32')
 
@@ -101,12 +101,12 @@ def _get_word_ids(docs, rnn_encode=True, tree_truncate=False, max_length=100, nr
             else:
                 queue = [sent.root for sent in doc.sents]
         else:
-            queue = list(doc)
-        words = []
+            queue = list(doc)  # 这里的doc是将Doc对象变成token list了，类似这种 [Net, income, was, $, 9.4, million, compared, to, the, prior, year, of, $, 2.7, million, .]
+        words = []   # 新建一个list
         while len(words) <= max_length and queue:
             word = queue.pop(0)
             if rnn_encode or (not word.is_punct and not word.is_space):
-                words.append(word)
+                words.append(word)     # 将不是punctuation和space的token加入words里
             if tree_truncate:
                 queue.extend(list(word.lefts))
                 queue.extend(list(word.rights))
@@ -139,6 +139,7 @@ def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, batch
 # [Net income was $9.4 million compared to the prior year of $2.7 million., Revenue exceeded twelve billion dollars, with a loss of $1b., viva La vida]
 # [Revenue exceeded twelve billion dollars, with a loss of $1b., Net income was $9.4 million compared to the prior year of $2.7 million., a sky full of star]
 
+#注意：nlp.pipe是一个generator，依次生成Doc对象，Doc对象由token组成，每个token有性质如token.vocab, token.vector, token.has_vector等等。（这些是spacy的概念）
 def to_categorical(y, nb_classes=None):
     y = np.asarray(y, dtype='int32')
 
