@@ -113,19 +113,35 @@ def _get_word_ids(docs, rnn_encode=True, tree_truncate=False, max_length=100, nr
         words.sort()
         for j, token in enumerate(words):
             if token.has_vector:
-                Xs[i, j] = token.rank + 1
+                Xs[i, j] = token.rank + 1   # 这里的rank是token在glove word-id里面对应的索引id，这里加1是为了保留0， 0是为了后面padding用的
             else:
-                Xs[i, j] = (token.shape % (nr_unk - 1)) + 2
-            j += 1
-            if j >= max_length:
-                break
+                Xs[i, j] = (token.shape % (nr_unk - 1)) + 2  # 这是为了处理oov
+        j += 1
+        if j >= max_length:
+            break
         else:
-            Xs[i, len(words)] = 1
+            Xs[i, len(words)] = 1 # 一句话结尾
     return Xs
-
+# Xs[0] -- question1，有3句话，
+# [[ 3774 19377  9176  2673  1369     2    24     6  1357     8   197 19770
+#       1     1  1099     1     1     0     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0]
+#  [15320  1552    26   197  9771  1099  1133     5     3  2611   211     8
+#     197 19537  1099     1     1     0     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0]
+#  [    6  3116   377     8  2084     1     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0     0     0     0     0     0     0     0     0     0     0
+#       0     0]]
 
 # def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, n_threads=10, batch_size=128, tree_truncate=False):
 # 去掉了 n_threads=10， 因为nlp.pipe中已经没有n_threads这个参数了，只有n_process， 多进程并行
+# 这里的nlp=en_core_web_md.load()
 def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, batch_size=128, tree_truncate=False):
     Xs = []
     for texts in (question_1, question_2):
