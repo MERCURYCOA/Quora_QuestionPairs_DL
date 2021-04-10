@@ -29,47 +29,47 @@ def main():
         reader = csv.reader(f)
         csv_rows = list(reader)[1:]
 
-    # For reproducibility
-    random.seed(0)
-    # Shuffle csv_rows deterministically in place
-    random.shuffle(csv_rows)
+        # For reproducibility
+        random.seed(0)
+        # Shuffle csv_rows deterministically in place
+        random.shuffle(csv_rows)
 
-    num_validation_lines = int(len(csv_rows) * config.validation_proportion)
+        num_validation_lines = int(len(csv_rows) * config.validation_proportion)
 
-    input_filename_full = os.path.basename(config.dataset_input_path)
-    input_filename, input_ext = os.path.splitext(input_filename_full)
-    train_out_path = os.path.join(config.dataset_output_path, "train_split" + input_ext)
-    val_out_path = os.path.join(config.dataset_output_path, "val_split" + input_ext)
+        input_filename_full = os.path.basename(config.dataset_input_path)
+        input_filename, input_ext = os.path.splitext(input_filename_full)
+        train_out_path = os.path.join(config.dataset_output_path, "train_split" + input_ext)
+        val_out_path = os.path.join(config.dataset_output_path, "val_split" + input_ext)
 
-    with open(train_out_path, "w") as f:
-        writer = csv.DictWriter(f, fieldnames=['id', 'qid1', 'qid2', 'question1', 'question2', 'is_duplicate'])
-        writer.writeheader()
-        rows = csv_rows[num_validation_lines:]
+        with open(train_out_path, "w") as f:
+            writer = csv.DictWriter(f, fieldnames=['id', 'qid1', 'qid2', 'question1', 'question2', 'is_duplicate'])
+            writer.writeheader()
+            rows = csv_rows[num_validation_lines:]
 
-        for row in rows:
-            writer.writerow({'id': row[0],
-                             'qid1': row[1],
-                             'qid2': row[2],
-                             'question1': row[3],
-                             'question2': row[4],
-                             'is_duplicate': row[5]
-                             })
+            for row in rows:
+                writer.writerow({'id': row[0],
+                                 'qid1': row[1],
+                                 'qid2': row[2],
+                                 'question1': row[3],
+                                 'question2': row[4],
+                                 'is_duplicate': row[5]
+                                 })
 
-    with open(val_out_path, "w") as f:
-        # writer = csv.writer(f, quoting=csv.QUOTE_ALL)
-        # writer.writerows(csv_rows[:num_validation_lines])
-        writer = csv.DictWriter(f, fieldnames=['id', 'qid1', 'qid2', 'question1', 'question2', 'is_duplicate'])
-        writer.writeheader()
+        with open(val_out_path, "w") as f:
+            # writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+            # writer.writerows(csv_rows[:num_validation_lines])
+            writer = csv.DictWriter(f, fieldnames=['id', 'qid1', 'qid2', 'question1', 'question2', 'is_duplicate'])
+            writer.writeheader()
 
-        rows = csv_rows[:num_validation_lines]
-        for row in rows:
-            writer.writerow({'id': row[0],
-                             'qid1': row[1],
-                             'qid2': row[2],
-                             'question1': row[3],
-                             'question2': row[4],
-                             'is_duplicate': row[5]
-                             })
+            rows = csv_rows[:num_validation_lines]
+            for row in rows:
+                writer.writerow({'id': row[0],
+                                 'qid1': row[1],
+                                 'qid2': row[2],
+                                 'question1': row[3],
+                                 'question2': row[4],
+                                 'is_duplicate': row[5]
+                                 })
 
 
 if __name__ == "__main__":
