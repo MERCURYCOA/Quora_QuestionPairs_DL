@@ -133,9 +133,11 @@ def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, batch
         Xs.append(_get_word_ids(list(nlp.pipe(texts, batch_size=batch_size)),
                                 max_length=max_length,
                                 tree_truncate=tree_truncate))
-
     return Xs[0], Xs[1]
-
+# 这里的逻辑： _get_word_ids（）的接受的输入依次是question1经过nlp.pipe的list, 和question2经过nlp.pipe的list, 对这两个list进行处理后，将结果依次append到Xs
+# print(list(nlp.pipe(texts, batch_size=batch_size))的结果如下：
+# [Net income was $9.4 million compared to the prior year of $2.7 million., Revenue exceeded twelve billion dollars, with a loss of $1b., viva La vida]
+# [Revenue exceeded twelve billion dollars, with a loss of $1b., Net income was $9.4 million compared to the prior year of $2.7 million., a sky full of star]
 
 def to_categorical(y, nb_classes=None):
     y = np.asarray(y, dtype='int32')
