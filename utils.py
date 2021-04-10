@@ -12,7 +12,7 @@ def get_cleaned_text(text, remove_stop_words=True):
         text = [w for w in text if w not in stopwords]
         text = " ".join(text)
 
-    text = re.sub(r"[^A-Za-z0-9^,!.\/'+-=_\']", " ", text)
+    text = re.sub(r"[^A-Za-z0-9^,!.\/'+-=_\']", " ", text)  # [] 匹配一系列字符串； 在[]^位于首位，意思是取非，即只匹配后面一系列字符。如果^不在首位，则没有特殊含义。
     text = re.sub(r"what's", "", text)
     text = re.sub(r"\'s", " ", text)
     text = re.sub(r"\'ve", " have ", text)
@@ -124,10 +124,13 @@ def _get_word_ids(docs, rnn_encode=True, tree_truncate=False, max_length=100, nr
     return Xs
 
 
-def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, n_threads=10, batch_size=128, tree_truncate=False):
+# def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, n_threads=10, batch_size=128, tree_truncate=False):
+# 去掉了 n_threads=10， 因为nlp.pipe中已经没有n_threads这个参数了，只有n_process， 多进程并行
+def convert_questions_to_word_ids(question_1, question_2, nlp, max_length, batch_size=128, tree_truncate=False):
     Xs = []
     for texts in (question_1, question_2):
-        Xs.append(_get_word_ids(list(nlp.pipe(texts, n_threads=n_threads, batch_size=batch_size)),
+        # Xs.append(_get_word_ids(list(nlp.pipe(texts, batch_size=batch_size)),
+        Xs.append(_get_word_ids(list(nlp.pipe(texts, batch_size=batch_size)),
                                 max_length=max_length,
                                 tree_truncate=tree_truncate))
 
